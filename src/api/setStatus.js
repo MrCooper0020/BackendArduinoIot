@@ -3,20 +3,52 @@ const fs = require("fs");
 
 module.exports = async function(request, response){
     var content = await readFile("./src/models", "/data.json");
+    var errorList = new Array();
+    var data = new Object(content);
+    const changes = Object.entries(request.body);
+    var haveBeenUpdated = false;
 
-    if(content == null || content.length == 0){
-        content = {
+    if(data == null || Object.entries(data).length == 0){
+        data = {
             hasSmoke: null,
             isHighLight: null,
             temp: null
         }
     }
 
-    await writeFile("./src/models", "/data.json", {
-        hasSmoke: request.body.hasSmoke != undefined ? request.body.hasSmoke : content.hasSmoke,
-        isHighLight: request.body.isHighLight != undefined ? request.body.isHighLight : content.isHighLight,
-        temp: request.body.temp != undefined ? request.body.temp : content.temp
+    changes.forEach(property => {
+        if(property[0] == 'temp'){
+            if(!(typeof property[1] == 'number' && !Number.isNaN(property[1]))){
+                errorList.push({
+                    property: property[0],
+                    message: `${property[0]} property must be a number!`
+                });
+            } else {
+                data[property[0]] = property[1];
+                haveBeenUpdated = true;
+            }
+        }
+
+        if(property[0] == 'isHighLight' || property[0] == 'hasSmoke'){
+            if(typeof property[1] != 'boolean'){
+                errorList.push({
+                    property: property[0],
+                    message: `${property[0]} property must be a boolean!`
+                });
+            } else {
+                data[property[0]] = property[1];
+                haveBeenUpdated = true;
+            }
+        }
     });
 
-    response.send('Status updated!');
+    await writeFile("./src/models", "/data.json", data);
+
+    if(errorList.length > 0){
+        response.send(errorList);
+    } else if(haveBeenUpdated){
+        response.send('Status updated!');
+    } else {
+        response.send('No changes have been made!');
+    }
 }
