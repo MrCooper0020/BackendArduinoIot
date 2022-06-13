@@ -45,6 +45,7 @@ module.exports = async function(request, response){
     await writeFile("./src/models", "/data.json", data);
 
     if(errorList.length > 0){
+        response.status(400);
         response.send(errorList);
     } else if(haveBeenUpdated){
         response.send('Status updated!');
