@@ -18,7 +18,7 @@ module.exports = async function(request, response){
             if(label == "temp"){
                 if(value < 30){
                     return "success";
-                } else if(value > 30 && value < 50){
+                } else if(value => 30 && value < 50){
                     return "warning";
                 } else {
                     return "danger";
