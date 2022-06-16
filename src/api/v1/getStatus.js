@@ -1,4 +1,4 @@
-const { readFile } = require("../utils/file");
+const { readFile } = require("../../utils/file");
 
 module.exports = async function(request, response){
     const content = await readFile("./src/models", "/data.json");

@@ -1,4 +1,4 @@
-const { readFile, writeFile } = require("../utils/file");
+const { readFile, writeFile } = require("../../utils/file");
 const fs = require("fs");
 
 module.exports = async function(request, response){
@@ -29,7 +29,19 @@ module.exports = async function(request, response){
             }
         }
 
-        if(property[0] == 'isHighLight' || property[0] == 'hasSmoke'){
+        if(property[0] == 'isHighLight'){
+            if(!(typeof property[1] == 'boolean' || (typeof property[1] == 'number' && !Number.isNaN(property[1])))){
+                errorList.push({
+                    property: property[0],
+                    message: `${property[0]} property must be a boolean or a number!`
+                });
+            } else {
+                data[property[0]] = property[1];
+                haveBeenUpdated = true;
+            }
+        }
+
+        if(property[0] == 'hasSmoke'){
             if(typeof property[1] != 'boolean'){
                 errorList.push({
                     property: property[0],

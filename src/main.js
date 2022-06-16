@@ -12,11 +12,13 @@ app.use([express.json(), (req, res, next) => {
     next();
 }]);
 
-const setStatus = require("./api/setStatus");
-const getStatus = require("./api/getStatus");
+const setStatus = require("./api/v1/setStatus");
+const getStatus = require("./api/v1/getStatus");
+const getStatusV2 = require("./api/v2/getStatus");
 
-app.get("/arduino-status", getStatus);
-app.post("/arduino-status", setStatus);
+app.get("/v1/arduino-status", getStatus);
+app.post("/v1/arduino-status", setStatus);
+app.get("/v2/arduino-status", getStatusV2);
 
 app.listen(port, () => {
     console.log(`Server running in port ${port}`);
